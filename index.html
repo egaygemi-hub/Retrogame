@@ -31,11 +31,135 @@
     </section>
     <section class="controller" aria-label="Game controller">
       <div class="dpad"><button data-key="up" class="up">▲</button><button data-key="left" class="left">◀</button><button data-key="right" class="right">▶</button><button data-key="down" class="down">▼</button><div class="dpad-center"></div></div>
-      <div class="center-controls"><button id="selectBtn" class="small-btn">SELECT</button><button id="pauseBtn" class="small-btn">START</button><div class="joystick" id="joystick"><div class="stick"></div></div></div>
+      <div class="center-controls"><button id="selectBtn" class="small-btn">SELECT</button><button id="pauseBtn" class="small-btn">START</button><div class="joystick" id="joystick" aria-label="Aim joystick"><div class="stick"></div></div></div>
       <div class="face"><button data-key="y" class="y">Y</button><button data-key="x" class="x">X</button><button data-key="b" class="b">B</button><button data-key="a" class="a">A</button></div>
     </section>
     <footer class="footer"><span>12 LEVELS</span><span>6 ENEMY TYPES</span><span>5 WEAPONS</span><span>LEVEL-UP SYSTEM</span><span>QUESTS</span></footer>
   </main>
   <script src="game.js"></script>
+  <script>
+    /* Mobile aim joystick: direction controls the projectile direction.
+       B still fires; the joystick only controls aim. */
+    (() => {
+      const joystick = document.getElementById('joystick');
+      const stick = joystick && joystick.querySelector('.stick');
+      if (!joystick || !stick) return;
+
+      let activePointer = null;
+      const deadZone = 0.18;
+      const maxRadius = 38;
+
+      function ensureAim() {
+        if (!window.game) return;
+        if (!Number.isFinite(game.aimX)) game.aimX = 1;
+        if (!Number.isFinite(game.aimY)) game.aimY = 0;
+      }
+
+      function setAim(clientX, clientY) {
+        const r = joystick.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        let dx = clientX - cx;
+        let dy = clientY - cy;
+        const distance = Math.hypot(dx, dy);
+        const limit = Math.min(maxRadius, Math.min(r.width, r.height) * 0.38);
+
+        if (distance > limit) {
+          dx = dx / distance * limit;
+          dy = dy / distance * limit;
+        }
+
+        stick.style.transform = `translate(${dx}px, ${dy}px)`;
+        ensureAim();
+        if (!window.game) return;
+
+        const nx = dx / Math.max(1, limit);
+        const ny = dy / Math.max(1, limit);
+        if (Math.hypot(nx, ny) >= deadZone) {
+          const length = Math.hypot(dx, dy) || 1;
+          game.aimX = dx / length;
+          game.aimY = dy / length;
+          game.player.facingX = game.aimX;
+          game.player.facingY = game.aimY;
+        }
+      }
+
+      function resetAim() {
+        stick.style.transform = 'translate(0, 0)';
+        activePointer = null;
+        ensureAim();
+      }
+
+      joystick.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        activePointer = e.pointerId;
+        joystick.setPointerCapture(e.pointerId);
+        setAim(e.clientX, e.clientY);
+      });
+      joystick.addEventListener('pointermove', e => {
+        if (e.pointerId === activePointer) {
+          e.preventDefault();
+          setAim(e.clientX, e.clientY);
+        }
+      });
+      joystick.addEventListener('pointerup', e => {
+        if (e.pointerId === activePointer) resetAim();
+      });
+      joystick.addEventListener('pointercancel', resetAim);
+
+      const originalStart = window.start;
+      if (typeof originalStart === 'function') {
+        window.start = function(n = 0) {
+          const result = originalStart(n);
+          if (window.game) {
+            game.aimX = 1;
+            game.aimY = 0;
+            game.player.facingX = 1;
+            game.player.facingY = 0;
+          }
+          resetAim();
+          return result;
+        };
+      }
+
+      const originalSpawnBullet = window.spawnBullet;
+      if (typeof originalSpawnBullet === 'function') {
+        window.spawnBullet = function() {
+          if (!window.game) return;
+          ensureAim();
+
+          const w = game.profile.weapon;
+          const p = game.player;
+          const baseX = p.x + p.w / 2;
+          const baseY = p.y + p.h / 2;
+          const ax = game.aimX || 1;
+          const ay = game.aimY || 0;
+          const angle = Math.atan2(ay, ax);
+          const speed = w === 'laser' ? 16 : w === 'bomb' ? 7 : 10;
+          const damage = w === 'laser' ? 3 : game.profile.damage;
+          const bulletW = w === 'laser' ? 34 : 12;
+
+          let angles = [angle];
+          if (w === 'spread') angles = [angle - 0.22, angle, angle + 0.22];
+
+          for (const a of angles) {
+            game.bullets.push({
+              x: baseX + Math.cos(a) * 20,
+              y: baseY + Math.sin(a) * 20,
+              vx: Math.cos(a) * speed,
+              vy: Math.sin(a) * speed,
+              w: bulletW,
+              h: 6,
+              damage,
+              bomb: w === 'bomb',
+              life: 80,
+              angle: a
+            });
+          }
+          if (typeof beep === 'function') beep(w === 'laser' ? 880 : 520, 0.035);
+        };
+      }
+    })();
+  </script>
 </body>
 </html>
