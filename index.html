@@ -38,8 +38,7 @@
   </main>
   <script src="game.js"></script>
   <script>
-    /* Mobile aim joystick: direction controls the projectile direction.
-       B still fires; the joystick only controls aim. */
+    /* Aim joystick: move the stick to choose the shooting direction, then press B. */
     (() => {
       const joystick = document.getElementById('joystick');
       const stick = joystick && joystick.querySelector('.stick');
@@ -50,7 +49,7 @@
       const maxRadius = 38;
 
       function ensureAim() {
-        if (!window.game) return;
+        if (!game) return;
         if (!Number.isFinite(game.aimX)) game.aimX = 1;
         if (!Number.isFinite(game.aimY)) game.aimY = 0;
       }
@@ -71,11 +70,9 @@
 
         stick.style.transform = `translate(${dx}px, ${dy}px)`;
         ensureAim();
-        if (!window.game) return;
+        if (!game) return;
 
-        const nx = dx / Math.max(1, limit);
-        const ny = dy / Math.max(1, limit);
-        if (Math.hypot(nx, ny) >= deadZone) {
+        if (Math.hypot(dx, dy) >= limit * deadZone) {
           const length = Math.hypot(dx, dy) || 1;
           game.aimX = dx / length;
           game.aimY = dy / length;
@@ -87,45 +84,28 @@
       function resetAim() {
         stick.style.transform = 'translate(0, 0)';
         activePointer = null;
-        ensureAim();
       }
 
       joystick.addEventListener('pointerdown', e => {
         e.preventDefault();
         activePointer = e.pointerId;
-        joystick.setPointerCapture(e.pointerId);
+        try { joystick.setPointerCapture(e.pointerId); } catch (_) {}
         setAim(e.clientX, e.clientY);
       });
       joystick.addEventListener('pointermove', e => {
-        if (e.pointerId === activePointer) {
-          e.preventDefault();
-          setAim(e.clientX, e.clientY);
-        }
+        if (e.pointerId !== activePointer) return;
+        e.preventDefault();
+        setAim(e.clientX, e.clientY);
       });
       joystick.addEventListener('pointerup', e => {
         if (e.pointerId === activePointer) resetAim();
       });
       joystick.addEventListener('pointercancel', resetAim);
 
-      const originalStart = window.start;
-      if (typeof originalStart === 'function') {
-        window.start = function(n = 0) {
-          const result = originalStart(n);
-          if (window.game) {
-            game.aimX = 1;
-            game.aimY = 0;
-            game.player.facingX = 1;
-            game.player.facingY = 0;
-          }
-          resetAim();
-          return result;
-        };
-      }
-
       const originalSpawnBullet = window.spawnBullet;
       if (typeof originalSpawnBullet === 'function') {
         window.spawnBullet = function() {
-          if (!window.game) return;
+          if (!game) return;
           ensureAim();
 
           const w = game.profile.weapon;
