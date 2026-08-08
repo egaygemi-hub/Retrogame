@@ -20,7 +20,7 @@ let game=null,raf=0,last=performance.now();
 let audioCtx=null;
 function beep(freq=440,duration=.05){
   try{
-    audioCtx??=new(window.AudioContext||window.webkitAudioContext)();
+    if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
     const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
     osc.frequency.value=freq;
     osc.type='square';
@@ -47,8 +47,8 @@ function makeLevel(n){
  return {n,name:levelNames[n],width,sky:palettes[n],platforms:p,coins,gems,powerups,enemies,flag:{x:width-90,y:420}};
 }
 function freshGame(n=0){
- const profile=game?.profile||{level:1,xp:0,coins:0,gems:0,totalKills:0,weapon:'blaster',maxHp:5,hp:5,damage:1,speed:3.6};
- const lvl=makeLevel(n);return {n,lvl,profile,cam:0,state:'playing',score:game?.score||0,bullets:[],enemyBullets:[],particles:[],power:null,powerTimer:0,inv:0,dash:0,spawn:{x:80,y:400},player:{x:80,y:400,w:38,h:42,vx:0,vy:0,jumpLock:false,fireLock:false},quest:quests.map(q=>({...q,progress:0,done:false})),time:0};
+ const profile=game&&game.profile?game.profile:{level:1,xp:0,coins:0,gems:0,totalKills:0,weapon:'blaster',maxHp:5,hp:5,damage:1,speed:3.6};
+ const lvl=makeLevel(n);return {n,lvl,profile,cam:0,state:'playing',score:game&&game.score||0,bullets:[],enemyBullets:[],particles:[],power:null,powerTimer:0,inv:0,dash:0,spawn:{x:80,y:400},player:{x:80,y:400,w:38,h:42,vx:0,vy:0,jumpLock:false,fireLock:false},quest:quests.map(q=>({...q,progress:0,done:false})),time:0};
 }
 function xpNeed(){return 100+(game.profile.level-1)*70}
 function addXP(v){let p=game.profile;p.xp+=v;while(p.xp>=xpNeed()){p.xp-=xpNeed();p.level++;p.maxHp++;p.hp=p.maxHp;p.damage+=.35;p.speed+=.18;showOverlay('LEVEL UP!',`Level ${p.level}! HP, damage and movement speed increased.`,'CONTINUE');beep(760,.16)}}
@@ -57,9 +57,9 @@ function updateQuest(id,amount=1){let q=game.quest.find(q=>q.id===id);if(!q||q.d
 function showOverlay(title,text,button='START GAME'){ui.title.textContent=title;ui.text.textContent=text;$('startBtn').textContent=button;ui.overlay.classList.remove('hidden')}
 function hideOverlay(){ui.overlay.classList.add('hidden')}
 function start(n=0){game=freshGame(n);hideOverlay();last=performance.now();if(!raf)raf=requestAnimationFrame(loop)}
-function restart(){start(game?.n??0)}
+function restart(){start(game&&game.n!=null?game.n:0)}
 function completeLevel(){for(const q of game.quest)if(q.id==='finish'&&!q.done)updateQuest('finish');addXP(120);if(game.n<11){game.state='between';showOverlay(`LEVEL ${game.n+1} CLEAR!`,`Next: ${levelNames[game.n+1]}. Quests and XP carry over.`,'NEXT LEVEL')}else{game.state='win';showOverlay('YOU WIN!',`All 12 levels cleared! Final level: ${game.profile.level}.`,'PLAY AGAIN')}}
-function rectHit(a,b){return a.x<a.w+b.x&&a.x+a.w>b.x&&a.y<a.h+b.y&&a.y+a.h>b.y}
+function rectHit(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
 function spawnBullet(){if(!game||!game.player)return;let w=game.profile.weapon,x=game.player.x+game.player.w,y=game.player.y+14;let shots=w==='spread'?[{dx:7,dy:-2},{dx:7,dy:0},{dx:7,dy:2}]:[{dx:9,dy:0}];if(w==='laser')shots=[{dx:15,dy:0}];if(w==='bomb')shots=[{dx:6,dy:-1,bomb:true}];for(const s of shots)game.bullets.push({x,y,vx:s.dx,vy:s.dy,w:w==='laser'?32:12,h:6,damage:w==='laser'?3:game.profile.damage,bomb:s.bomb,life:70});beep(w==='laser'?880:520,.035)}
 function hurt(d=1){if(game.inv>0||game.power==='shield')return;game.profile.hp-=d;game.inv=70;beep(150,.12);if(game.profile.hp<=0){game.profile.hp=game.profile.maxHp;game.score=Math.max(0,game.score-100);game.player.x=game.spawn.x;game.player.y=game.spawn.y;game.cam=0}}
 function killEnemy(e){e.dead=true;game.score+=e.score;game.profile.totalKills++;addXP(e.xp);updateQuest('kills');for(let i=0;i<8;i++)game.particles.push({x:e.x+e.w/2,y:e.y+e.h/2,vx:(Math.random()-.5)*4,vy:(Math.random()-.8)*4,life:30})}
@@ -104,7 +104,7 @@ function draw(){
  ctx.restore();
 }
 function updateHUD(){
- const p=game.profile,n=xpNeed();ui.health.style.width=(p.hp/p.maxHp*100)+'%';ui.level.textContent=p.level;ui.level2.textContent=`LEVEL ${game.n+1} — ${game.lvl.name}`;ui.xp.textContent=`${Math.floor(p.xp)}/${n}`;ui.xpFill.style.width=(p.xp/n*100)+'%';ui.coins.textContent=p.coins;ui.gems.textContent=p.gems;ui.weapon.textContent=weaponName[p.weapon];ui.lives.textContent='♥'.repeat(Math.max(0,Math.min(3,p.hp)))+'♡'.repeat(Math.max(0,3-p.hp));ui.power.textContent=game.power?`POWER: ${game.power.toUpperCase()}`:'NO POWER-UP';
+ const p=game.profile,n=xpNeed();ui.health.style.width=(p.hp/p.maxHp*100)+'%';ui.level.textContent=p.level;ui.level2.textContent=`LEVEL ${game.n+1} — ${game.lvl.name}`;ui.xp.textContent=`${Math.floor(p.xp)}/${n}`;ui.xpFill.style.width=(p.xp/n*100)+'%';ui.coins.textContent=p.coins;ui.gems.textContent=p.gems;ui.weapon.textContent=weaponName[p.weapon];const hearts=Math.max(0,Math.min(3,Math.ceil(p.hp)));ui.lives.textContent='♥'.repeat(hearts)+'♡'.repeat(3-hearts);ui.power.textContent=game.power?`POWER: ${game.power.toUpperCase()}`:'NO POWER-UP';
  ui.quests.innerHTML=game.quest.map(q=>`<div class="quest ${q.done?'done':''}"><span>${q.done?'✓':'□'} ${q.label}<small>${q.done?' complete':' '+q.progress+'/'+q.target}</small></span><b>+${q.reward} XP</b></div>`).join('');
 }
 function loop(t){const dt=Math.min(2,(t-last)/16.67);last=t;update(dt);draw();raf=requestAnimationFrame(loop)}
@@ -115,7 +115,7 @@ window.addEventListener('keydown',e=>{key(e.code,true);if(['ArrowLeft','ArrowRig
 window.addEventListener('keyup',e=>key(e.code,false));
 function bindHold(el,name){if(!el)return;const on=e=>{e.preventDefault();input[name]=true};const off=e=>{e.preventDefault();input[name]=false};el.addEventListener('pointerdown',on);el.addEventListener('pointerup',off);el.addEventListener('pointercancel',off);el.addEventListener('pointerleave',off)}
 document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;if(k==='left'||k==='right'||k==='up'||k==='down')bindHold(b,k==='up'?'jump':k);else if(k==='a')bindHold(b,'jump');else if(k==='b')bindHold(b,'fire');else if(k==='x')bindHold(b,'dash');else if(k==='y')b.addEventListener('pointerdown',e=>{e.preventDefault();cycleWeapon()})});
-$('startBtn').addEventListener('click',()=>{if(!game||game.state==='win'||game.state==='between')start(game?.state==='between'?(game.n+1)%12:0);else if(game.state==='paused')togglePause();else start(0)});
+$('startBtn').addEventListener('click',()=>{if(!game||game.state==='win'||game.state==='between')start(game&&game.state==='between'?(game.n+1)%12:0);else if(game.state==='paused')togglePause();else start(0)});
 $('pauseBtn').addEventListener('click',()=>{if(!game)start(0);else togglePause()});
 $('selectBtn').addEventListener('click',()=>{if(game){game.quest.reverse();updateHUD();beep(430,.04)}});
 $('questBtn').addEventListener('click',()=>{$('selectBtn').click()});
@@ -124,3 +124,4 @@ $('joystick').addEventListener('pointerdown',e=>{joy=true;$('joystick').setPoint
 $('joystick').addEventListener('pointermove',e=>{if(!joy)return;const r=$('joystick').getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2);input.left=dx<-12;input.right=dx>12});
 $('joystick').addEventListener('pointerup',()=>{joy=false;input.left=input.right=false});
 game=freshGame(0);game.state='menu';updateHUD();draw();showOverlay('MUSHROOM MEADOW RUN','Choose START. Complete quests, defeat enemies, collect gems and level up through 12 stages.','START GAME');
+                                                                                                                                                                                                                                                                                                                                                                                                                                                     
