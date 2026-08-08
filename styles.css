@@ -1,25 +1,1224 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-:root{--bg:#0a0d12;--shell:#1a2029;--panel:#111722;--screen:#91a96b;--ink:#172019;--accent:#e9c44a;--red:#d95858;--blue:#4d86c7}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% 0,#263140 0,#0a0d12 55%);color:#f3f5f7;font-family:system-ui,sans-serif}
-body{padding:12px 10px 28px}
-button{font:inherit;touch-action:none;cursor:pointer}
-.shell{max-width:1120px;margin:auto}
-.topbar{background:linear-gradient(145deg,#262e38,#141a22);border:3px solid #394553;border-radius:18px;padding:12px 14px;display:flex;justify-content:space-between;gap:12px;box-shadow:0 12px 30px #0008}
-.brand{display:flex;align-items:center;gap:10px}.brand-icon{font-size:42px}.brand h1{font:16px 'Press Start 2P',monospace;margin:0 0 8px}.brand p{margin:0;color:#9ca9b8;font-size:11px}
-.top-stats{display:flex;align-items:center;gap:8px}.top-stats>div{background:#0e141c;border:2px solid #2c3948;border-radius:10px;padding:7px 9px;min-width:58px}.top-stats small{display:block;color:#8290a0;font-size:9px}.top-stats b{font:12px 'Press Start 2P',monospace}.meter{width:75px;height:8px;background:#303845;border-radius:8px;overflow:hidden;margin-top:6px}.meter i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#5bd66f,#e8c64b,#d95858)}
-.console{margin-top:12px;background:#1a2029;border:4px solid #394553;border-radius:26px;padding:12px;box-shadow:inset 0 2px #ffffff12,0 20px 45px #0009}
-.screen-frame{background:#0b0f14;border:7px solid #303944;border-radius:20px;padding:8px;box-shadow:inset 0 0 0 3px #090c10}
-.screen-head{display:flex;justify-content:space-between;background:#101720;color:#aab5c2;padding:7px 10px;font:10px 'Press Start 2P',monospace;border-radius:8px 8px 0 0}
-.screen{position:relative;aspect-ratio:16/9;border:4px solid #222c36;background:#10151a;overflow:hidden}
-canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
-.overlay{position:absolute;inset:0;display:grid;place-items:center;background:#08101acc;z-index:4}.overlay.hidden{display:none}
-.panel{width:min(90%,600px);background:#101823;border:3px solid #4a5969;border-radius:14px;padding:24px;text-align:center;box-shadow:0 18px 50px #000b}.panel h2{font:20px 'Press Start 2P',monospace;line-height:1.6;margin:8px 0 16px;color:#f0cf57}.panel p{color:#b8c2cc;line-height:1.5}.pixel-logo{font-size:58px}
-.primary,.small-btn{border:0;border-bottom:5px solid #9c7b1e;background:linear-gradient(#f4d66a,#d5ad36);color:#17130a;border-radius:10px;padding:12px 18px;font-weight:900}.primary{font:12px 'Press Start 2P',monospace}.primary:active,.small-btn:active{transform:translateY(3px);border-bottom-width:2px}.hint{font-size:10px!important}
-.quest-panel{margin-top:10px;background:#0f151d;border:3px solid #303c49;border-radius:14px;padding:10px}.quest-title{font:11px 'Press Start 2P',monospace;color:#e4c455;display:flex;justify-content:space-between;align-items:center}.quest-title button{font-size:9px;padding:6px;border-radius:6px;background:#283646;color:#fff;border:1px solid #506074}
-.quest{display:grid;grid-template-columns:1fr auto;gap:4px;padding:8px 4px;border-bottom:1px solid #27313c;font-size:12px}.quest small{color:#8795a4}.quest.done{color:#66dd83}.progress-line{display:flex;gap:8px;align-items:center;margin-top:9px;font:9px 'Press Start 2P',monospace}.progress-line>div{height:9px;flex:1;background:#29323d;border-radius:8px;overflow:hidden}.progress-line i{display:block;height:100%;width:0;background:#e9c44a}.buffs{margin-top:8px;font-size:11px;color:#78d7ff}
-.controller{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 30px;background:linear-gradient(145deg,#222a34,#11171e);border:4px solid #394553;border-radius:0 0 30px 30px;box-shadow:inset 0 4px #ffffff0a,0 18px 35px #0009}
-.dpad{position:relative;width:150px;height:150px}.dpad button{position:absolute;border:0;background:#151b22;color:#aeb8c2;width:48px;height:48px;border-radius:8px;box-shadow:inset 0 0 0 2px #3a4653,0 4px #090c10;font-size:22px}.dpad .up{left:51px;top:0}.dpad .left{left:0;top:51px}.dpad .right{right:0;top:51px}.dpad .down{left:51px;bottom:0}.dpad-center{position:absolute;left:51px;top:51px;width:48px;height:48px;background:#151b22;box-shadow:inset 0 0 0 2px #3a4653}
-.center-controls{display:flex;align-items:center;gap:10px;flex-direction:column}.small-btn{font-size:9px;padding:8px 12px;background:#444f5d;color:#fff;border:1px solid #697686;border-bottom-width:4px}.joystick{width:78px;height:78px;border-radius:50%;background:#0d1218;box-shadow:inset 0 0 0 8px #252e38,0 5px #080a0d;display:grid;place-items:center}.stick{width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#66717d,#252d35 65%);box-shadow:0 4px 5px #000}
-.face{position:relative;width:170px;height:150px}.face button{position:absolute;width:56px;height:56px;border:0;border-radius:50%;font:bold 18px system-ui;color:#fff;box-shadow:inset 0 0 0 3px #ffffff28,0 5px #080a0d}.face .y{left:57px;top:0;background:#d0a833}.face .x{left:0;top:47px;background:#527eb2}.face .b{right:0;top:47px;background:#c64e56}.face .a{left:57px;bottom:0;background:#46a467}.footer{display:flex;justify-content:center;flex-wrap:wrap;gap:16px;color:#778494;font:8px 'Press Start 2P',monospace;padding:14px}
-@media(max-width:700px){body{padding:7px}.topbar{padding:9px}.brand h1{font-size:11px}.brand p{font-size:8px}.brand-icon{font-size:32px}.top-stats{gap:3px}.top-stats>div{min-width:42px;padding:5px}.top-stats small{font-size:7px}.top-stats b{font-size:8px}.meter{width:45px}.console{padding:7px;border-width:3px;border-radius:18px}.screen-frame{padding:5px;border-width:5px}.controller{padding:12px 10px;gap:5px}.dpad{transform:scale(.72);margin:-20px}.face{transform:scale(.72);margin:-20px}.joystick{width:60px;height:60px}.stick{width:34px;height:34px}.small-btn{font-size:7px;padding:6px}.panel{padding:14px}.panel h2{font-size:13px}.pixel-logo{font-size:42px}.quest{font-size:10px}}
+
+:root {
+  --bg: #0a0d12;
+  --shell: #1a2029;
+  --panel: #111722;
+  --accent: #e9c44a;
+  --red: #d95858;
+  --blue: #4d86c7;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(
+      circle at 50% 0,
+      #263140 0,
+      #0a0d12 55%
+    );
+  color: #f3f5f7;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  padding: 10px;
+  padding-bottom: 24px;
+  overflow-x: hidden;
+}
+
+button {
+  font: inherit;
+  touch-action: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.shell {
+  width: 100%;
+  max-width: 1120px;
+  margin: auto;
+}
+
+
+/* =========================
+   TOP BAR
+========================= */
+
+.topbar {
+  background:
+    linear-gradient(
+      145deg,
+      #262e38,
+      #141a22
+    );
+
+  border: 3px solid #394553;
+  border-radius: 18px;
+
+  padding: 12px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 12px;
+
+  box-shadow:
+    0 12px 30px #0008;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand-icon {
+  font-size: 40px;
+  flex-shrink: 0;
+}
+
+.brand h1 {
+  font:
+    16px
+    'Press Start 2P',
+    monospace;
+
+  margin: 0 0 7px;
+}
+
+.brand p {
+  margin: 0;
+  color: #9ca9b8;
+  font-size: 11px;
+}
+
+.top-stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.top-stats > div {
+  background: #0e141c;
+  border: 2px solid #2c3948;
+  border-radius: 10px;
+  padding: 7px 8px;
+  min-width: 55px;
+}
+
+.top-stats small {
+  display: block;
+  color: #8290a0;
+  font-size: 8px;
+  margin-bottom: 4px;
+}
+
+.top-stats b {
+  font:
+    11px
+    'Press Start 2P',
+    monospace;
+}
+
+.meter {
+  width: 70px;
+  height: 8px;
+  background: #303845;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.meter i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background:
+    linear-gradient(
+      90deg,
+      #5bd66f,
+      #e8c64b,
+      #d95858
+    );
+}
+
+
+/* =========================
+   GAME CONSOLE
+========================= */
+
+.console {
+  margin-top: 12px;
+
+  background: #1a2029;
+
+  border: 4px solid #394553;
+  border-radius: 26px;
+
+  padding: 12px;
+
+  box-shadow:
+    inset 0 2px #ffffff12,
+    0 20px 45px #0009;
+}
+
+.screen-frame {
+  background: #0b0f14;
+
+  border: 7px solid #303944;
+  border-radius: 20px;
+
+  padding: 8px;
+
+  box-shadow:
+    inset 0 0 0 3px #090c10;
+}
+
+.screen-head {
+  display: flex;
+  justify-content: space-between;
+
+  background: #101720;
+  color: #aab5c2;
+
+  padding: 8px 10px;
+
+  font:
+    9px
+    'Press Start 2P',
+    monospace;
+
+  border-radius: 8px 8px 0 0;
+
+  gap: 5px;
+}
+
+.screen {
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio: 16 / 9;
+
+  border: 4px solid #222c36;
+
+  background: #10151a;
+
+  overflow: hidden;
+
+  border-radius: 0 0 5px 5px;
+}
+
+canvas {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+
+  touch-action: none;
+}
+
+
+/* =========================
+   START / PAUSE OVERLAY
+========================= */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+
+  display: grid;
+  place-items: center;
+
+  background: #08101acc;
+
+  z-index: 4;
+
+  padding: 15px;
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.panel {
+  width: min(90%, 600px);
+
+  background: #101823;
+
+  border: 3px solid #4a5969;
+  border-radius: 14px;
+
+  padding: 24px;
+
+  text-align: center;
+
+  box-shadow:
+    0 18px 50px #000b;
+}
+
+.panel h2 {
+  font:
+    20px
+    'Press Start 2P',
+    monospace;
+
+  line-height: 1.6;
+
+  margin: 8px 0 16px;
+
+  color: #f0cf57;
+}
+
+.panel p {
+  color: #b8c2cc;
+  line-height: 1.5;
+}
+
+.pixel-logo {
+  font-size: 58px;
+}
+
+.primary,
+.small-btn {
+  border: 0;
+
+  border-bottom: 5px solid #9c7b1e;
+
+  background:
+    linear-gradient(
+      #f4d66a,
+      #d5ad36
+    );
+
+  color: #17130a;
+
+  border-radius: 10px;
+
+  padding: 12px 18px;
+
+  font-weight: 900;
+}
+
+.primary {
+  font:
+    11px
+    'Press Start 2P',
+    monospace;
+}
+
+.primary:active,
+.small-btn:active {
+  transform: translateY(3px);
+  border-bottom-width: 2px;
+}
+
+.hint {
+  font-size: 10px !important;
+}
+
+
+/* =========================
+   QUEST PANEL
+========================= */
+
+.quest-panel {
+  margin-top: 10px;
+
+  background: #0f151d;
+
+  border: 3px solid #303c49;
+
+  border-radius: 14px;
+
+  padding: 10px;
+}
+
+.quest-title {
+  font:
+    11px
+    'Press Start 2P',
+    monospace;
+
+  color: #e4c455;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quest-title button {
+  font-size: 9px;
+
+  padding: 6px;
+
+  border-radius: 6px;
+
+  background: #283646;
+  color: #fff;
+
+  border: 1px solid #506074;
+}
+
+.quest {
+  display: grid;
+
+  grid-template-columns: 1fr auto;
+
+  gap: 4px;
+
+  padding: 8px 4px;
+
+  border-bottom: 1px solid #27313c;
+
+  font-size: 12px;
+}
+
+.quest small {
+  color: #8795a4;
+}
+
+.quest.done {
+  color: #66dd83;
+}
+
+.progress-line {
+  display: flex;
+
+  gap: 8px;
+
+  align-items: center;
+
+  margin-top: 9px;
+
+  font:
+    9px
+    'Press Start 2P',
+    monospace;
+}
+
+.progress-line > div {
+  height: 9px;
+
+  flex: 1;
+
+  background: #29323d;
+
+  border-radius: 8px;
+
+  overflow: hidden;
+}
+
+.progress-line i {
+  display: block;
+
+  height: 100%;
+
+  width: 0;
+
+  background: #e9c44a;
+}
+
+.buffs {
+  margin-top: 8px;
+
+  font-size: 11px;
+
+  color: #78d7ff;
+}
+
+
+/* =========================
+   CONTROLLER
+========================= */
+
+.controller {
+  display: grid;
+
+  grid-template-columns:
+    minmax(110px, 1fr)
+    auto
+    minmax(110px, 1fr);
+
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 18px 25px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #222a34,
+      #11171e
+    );
+
+  border: 4px solid #394553;
+
+  border-radius: 0 0 30px 30px;
+
+  box-shadow:
+    inset 0 4px #ffffff0a,
+    0 18px 35px #0009;
+}
+
+
+/* =========================
+   D-PAD
+========================= */
+
+.dpad {
+  position: relative;
+
+  width: 150px;
+  height: 150px;
+
+  justify-self: center;
+}
+
+.dpad button {
+  position: absolute;
+
+  border: 0;
+
+  background: #151b22;
+
+  color: #aeb8c2;
+
+  width: 48px;
+  height: 48px;
+
+  border-radius: 8px;
+
+  box-shadow:
+    inset 0 0 0 2px #3a4653,
+    0 4px #090c10;
+
+  font-size: 22px;
+}
+
+.dpad button:active {
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 0 0 2px #3a4653;
+}
+
+.dpad .up {
+  left: 51px;
+  top: 0;
+}
+
+.dpad .left {
+  left: 0;
+  top: 51px;
+}
+
+.dpad .right {
+  right: 0;
+  top: 51px;
+}
+
+.dpad .down {
+  left: 51px;
+  bottom: 0;
+}
+
+.dpad-center {
+  position: absolute;
+
+  left: 51px;
+  top: 51px;
+
+  width: 48px;
+  height: 48px;
+
+  background: #151b22;
+
+  box-shadow:
+    inset 0 0 0 2px #3a4653;
+}
+
+
+/* =========================
+   CENTER CONTROLS
+========================= */
+
+.center-controls {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  flex-direction: column;
+}
+
+.small-btn {
+  font-size: 9px;
+
+  padding: 8px 12px;
+
+  background: #444f5d;
+
+  color: #fff;
+
+  border: 1px solid #697686;
+
+  border-bottom-width: 4px;
+}
+
+.joystick {
+  width: 78px;
+  height: 78px;
+
+  border-radius: 50%;
+
+  background: #0d1218;
+
+  box-shadow:
+    inset 0 0 0 8px #252e38,
+    0 5px #080a0d;
+
+  display: grid;
+
+  place-items: center;
+
+  touch-action: none;
+}
+
+.stick {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #66717d,
+      #252d35 65%
+    );
+
+  box-shadow:
+    0 4px 5px #000;
+}
+
+
+/* =========================
+   FACE BUTTONS
+========================= */
+
+.face {
+  position: relative;
+
+  width: 170px;
+  height: 150px;
+
+  justify-self: center;
+}
+
+.face button {
+  position: absolute;
+
+  width: 56px;
+  height: 56px;
+
+  border: 0;
+
+  border-radius: 50%;
+
+  font:
+    bold 18px
+    system-ui;
+
+  color: #fff;
+
+  box-shadow:
+    inset 0 0 0 3px #ffffff28,
+    0 5px #080a0d;
+}
+
+.face button:active {
+  transform: translateY(4px);
+
+  box-shadow:
+    inset 0 0 0 3px #ffffff28;
+}
+
+.face .y {
+  left: 57px;
+  top: 0;
+
+  background: #d0a833;
+}
+
+.face .x {
+  left: 0;
+  top: 47px;
+
+  background: #527eb2;
+}
+
+.face .b {
+  right: 0;
+  top: 47px;
+
+  background: #c64e56;
+}
+
+.face .a {
+  left: 57px;
+  bottom: 0;
+
+  background: #46a467;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+  display: flex;
+
+  justify-content: center;
+
+  flex-wrap: wrap;
+
+  gap: 16px;
+
+  color: #778494;
+
+  font:
+    8px
+    'Press Start 2P',
+    monospace;
+
+  padding: 14px;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 850px) {
+
+  body {
+    padding: 6px;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .brand {
+    justify-content: center;
+  }
+
+  .top-stats {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(5, 1fr);
+  }
+
+  .top-stats > div {
+    min-width: 0;
+    text-align: center;
+  }
+
+  .meter {
+    width: 100%;
+  }
+
+  .controller {
+    grid-template-columns:
+      1fr 90px 1fr;
+
+    gap: 5px;
+
+    padding: 15px 8px;
+  }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  body {
+    padding: 4px;
+    padding-bottom: 12px;
+  }
+
+  .shell {
+    width: 100%;
+  }
+
+  /* Header */
+
+  .topbar {
+    border-width: 2px;
+
+    border-radius: 12px;
+
+    padding: 8px;
+
+    gap: 8px;
+  }
+
+  .brand {
+    justify-content: center;
+
+    text-align: center;
+  }
+
+  .brand-icon {
+    font-size: 30px;
+  }
+
+  .brand h1 {
+    font-size: 10px;
+
+    line-height: 1.5;
+
+    margin-bottom: 3px;
+  }
+
+  .brand p {
+    font-size: 7px;
+  }
+
+  .top-stats {
+    gap: 3px;
+  }
+
+  .top-stats > div {
+    padding: 5px 2px;
+
+    border-width: 1px;
+
+    border-radius: 7px;
+  }
+
+  .top-stats small {
+    font-size: 6px;
+  }
+
+  .top-stats b {
+    font-size: 7px;
+  }
+
+  .meter {
+    height: 6px;
+    margin-top: 3px;
+  }
+
+
+  /* Game */
+
+  .console {
+    margin-top: 6px;
+
+    padding: 4px;
+
+    border-width: 2px;
+
+    border-radius: 13px;
+  }
+
+  .screen-frame {
+    padding: 3px;
+
+    border-width: 3px;
+
+    border-radius: 10px;
+  }
+
+  .screen-head {
+    padding: 6px;
+
+    font-size: 6px;
+
+    border-radius: 5px 5px 0 0;
+  }
+
+  .screen {
+    border-width: 2px;
+  }
+
+
+  /* Overlay */
+
+  .overlay {
+    padding: 8px;
+  }
+
+  .panel {
+    width: 94%;
+
+    padding: 12px;
+
+    border-width: 2px;
+
+    border-radius: 9px;
+  }
+
+  .pixel-logo {
+    font-size: 35px;
+  }
+
+  .panel h2 {
+    font-size: 11px;
+
+    line-height: 1.5;
+
+    margin: 5px 0 10px;
+  }
+
+  .panel p {
+    font-size: 10px;
+
+    line-height: 1.4;
+  }
+
+  .primary {
+    width: 100%;
+
+    padding: 11px 8px;
+
+    font-size: 8px;
+  }
+
+  .hint {
+    font-size: 7px !important;
+  }
+
+
+  /* Quest */
+
+  .quest-panel {
+    margin-top: 6px;
+
+    padding: 7px;
+
+    border-width: 2px;
+
+    border-radius: 9px;
+  }
+
+  .quest-title {
+    font-size: 8px;
+  }
+
+  .quest-title button {
+    font-size: 7px;
+
+    padding: 5px;
+  }
+
+  .quest {
+    font-size: 9px;
+
+    padding: 6px 2px;
+  }
+
+  .quest small {
+    font-size: 8px;
+  }
+
+  .progress-line {
+    font-size: 7px;
+  }
+
+  .buffs {
+    font-size: 8px;
+  }
+
+
+  /* Controller */
+
+  .controller {
+    display: grid;
+
+    grid-template-columns:
+      1fr 65px 1fr;
+
+    gap: 0;
+
+    padding: 8px 3px;
+
+    border-width: 2px;
+
+    border-radius: 0 0 15px 15px;
+  }
+
+  /* D-pad */
+
+  .dpad {
+    width: 112px;
+    height: 112px;
+
+    transform: scale(.78);
+
+    transform-origin: center;
+
+    margin: -12px auto;
+  }
+
+  .dpad button {
+    width: 43px;
+    height: 43px;
+
+    font-size: 18px;
+  }
+
+  .dpad .up {
+    left: 35px;
+  }
+
+  .dpad .left {
+    left: 0;
+    top: 35px;
+  }
+
+  .dpad .right {
+    right: 0;
+    top: 35px;
+  }
+
+  .dpad .down {
+    left: 35px;
+  }
+
+  .dpad-center {
+    left: 35px;
+    top: 35px;
+
+    width: 43px;
+    height: 43px;
+  }
+
+
+  /* Center */
+
+  .center-controls {
+    gap: 6px;
+  }
+
+  .small-btn {
+    width: 58px;
+
+    padding: 6px 3px;
+
+    font-size: 6px;
+
+    border-bottom-width: 3px;
+  }
+
+  .joystick {
+    width: 58px;
+    height: 58px;
+
+    box-shadow:
+      inset 0 0 0 6px #252e38,
+      0 4px #080a0d;
+  }
+
+  .stick {
+    width: 30px;
+    height: 30px;
+  }
+
+
+  /* Face buttons */
+
+  .face {
+    width: 112px;
+    height: 112px;
+
+    transform: scale(.78);
+
+    transform-origin: center;
+
+    margin: -12px auto;
+  }
+
+  .face button {
+    width: 43px;
+    height: 43px;
+
+    font-size: 14px;
+  }
+
+  .face .y {
+    left: 34px;
+  }
+
+  .face .x {
+    left: 0;
+    top: 34px;
+  }
+
+  .face .b {
+    right: 0;
+    top: 34px;
+  }
+
+  .face .a {
+    left: 34px;
+  }
+
+
+  /* Footer */
+
+  .footer {
+    gap: 7px;
+
+    padding: 8px 3px;
+
+    font-size: 6px;
+  }
+}
+
+
+/* =====================================================
+   VERY SMALL PHONES
+===================================================== */
+
+@media (max-width: 380px) {
+
+  .brand h1 {
+    font-size: 8px;
+  }
+
+  .brand-icon {
+    font-size: 25px;
+  }
+
+  .top-stats b {
+    font-size: 6px;
+  }
+
+  .top-stats small {
+    font-size: 5px;
+  }
+
+  .screen-head {
+    font-size: 5px;
+  }
+
+  .controller {
+    grid-template-columns:
+      1fr 58px 1fr;
+  }
+
+  .dpad,
+  .face {
+    transform: scale(.68);
+  }
+
+  .small-btn {
+    width: 52px;
+    font-size: 5px;
+  }
+
+  .joystick {
+    width: 52px;
+    height: 52px;
+  }
+
+  .stick {
+    width: 27px;
+    height: 27px;
+  }
+
+  .footer {
+    font-size: 5px;
+  }
+}
+
+
+/* =====================================================
+   LANDSCAPE PHONE
+===================================================== */
+
+@media (max-height: 520px) and (orientation: landscape) {
+
+  body {
+    padding: 3px;
+  }
+
+  .topbar {
+    flex-direction: row;
+
+    padding: 5px;
+  }
+
+  .brand-icon {
+    font-size: 24px;
+  }
+
+  .brand h1 {
+    font-size: 8px;
+  }
+
+  .brand p {
+    font-size: 6px;
+  }
+
+  .top-stats > div {
+    padding: 3px;
+  }
+
+  .console {
+    margin-top: 4px;
+  }
+
+  .quest-panel {
+    display: none;
+  }
+
+  .controller {
+    padding: 5px;
+  }
+
+  .dpad,
+  .face {
+    transform: scale(.6);
+    margin: -20px;
+  }
+
+  .joystick {
+    width: 50px;
+    height: 50px;
+  }
+
+  .stick {
+    width: 26px;
+    height: 26px;
+  }
+
+  .footer {
+    display: none;
+  }
+  }
