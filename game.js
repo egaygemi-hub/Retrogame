@@ -1421,3 +1421,570 @@ function draw() {
   ctx.globalAlpha = 1;
 
   
+  ctx.restore();
+}
+
+
+/* =========================
+   HUD
+========================= */
+
+function updateHUD() {
+  if (!game) return;
+
+  const p = game.profile;
+  const needed = xpNeed();
+
+  if (ui.health) {
+    ui.health.style.width =
+      `${Math.max(0, Math.min(100, (p.hp / p.maxHp) * 100))}%`;
+  }
+
+  if (ui.level) {
+    ui.level.textContent = p.level;
+  }
+
+  if (ui.level2) {
+    ui.level2.textContent =
+      `LEVEL ${game.n + 1} — ${game.lvl.name}`;
+  }
+
+  if (ui.xp) {
+    ui.xp.textContent =
+      `${Math.floor(p.xp)}/${needed}`;
+  }
+
+  if (ui.xpFill) {
+    ui.xpFill.style.width =
+      `${Math.max(0, Math.min(100, (p.xp / needed) * 100))}%`;
+  }
+
+  if (ui.coins) {
+    ui.coins.textContent = p.coins;
+  }
+
+  if (ui.gems) {
+    ui.gems.textContent = p.gems;
+  }
+
+  if (ui.weapon) {
+    ui.weapon.textContent =
+      weaponName[p.weapon] || 'BLASTER';
+  }
+
+  if (ui.lives) {
+    const hearts = Math.max(
+      0,
+      Math.min(3, Math.ceil(p.hp))
+    );
+
+    ui.lives.textContent =
+      '♥'.repeat(hearts) +
+      '♡'.repeat(3 - hearts);
+  }
+
+  if (ui.power) {
+    ui.power.textContent =
+      game.power
+        ? `POWER: ${String(game.power).toUpperCase()}`
+        : 'NO POWER-UP';
+  }
+
+  if (ui.quests) {
+    ui.quests.innerHTML =
+      game.quest.map(q => `
+        <div class="quest ${q.done ? 'done' : ''}">
+          <span>
+            ${q.done ? '✓' : '□'}
+            ${q.label}
+            <small>
+              ${q.done
+                ? ' COMPLETE'
+                : ` ${q.progress}/${q.target}`}
+            </small>
+          </span>
+          <b>+${q.reward} XP</b>
+        </div>
+      `).join('');
+  }
+}
+
+
+/* =========================
+   WEAPON
+========================= */
+
+function cycleWeapon() {
+  if (!game) return;
+
+  const current =
+    weapons.indexOf(game.profile.weapon);
+
+  const next =
+    (current + 1) % weapons.length;
+
+  game.profile.weapon =
+    weapons[next];
+
+  updateHUD();
+
+  beep(620, 0.05);
+}
+
+
+/* =========================
+   PAUSE
+========================= */
+
+function togglePause() {
+  if (!game) return;
+
+  if (game.state === 'playing') {
+    game.state = 'paused';
+
+    showOverlay(
+      'PAUSED',
+      'Press START to continue.',
+      'CONTINUE'
+    );
+
+    return;
+  }
+
+  if (game.state === 'paused') {
+    game.state = 'playing';
+
+    hideOverlay();
+
+    last = performance.now();
+  }
+}
+
+
+/* =========================
+   KEYBOARD CONTROLS
+========================= */
+
+function key(code, down) {
+
+  if (
+    code === 'ArrowLeft' ||
+    code === 'KeyA'
+  ) {
+    input.left = down;
+  }
+
+  if (
+    code === 'ArrowRight' ||
+    code === 'KeyD'
+  ) {
+    input.right = down;
+  }
+
+  if (
+    code === 'ArrowUp' ||
+    code === 'KeyW' ||
+    code === 'Space'
+  ) {
+    input.jump = down;
+  }
+
+  if (
+    code === 'KeyJ' ||
+    code === 'KeyB'
+  ) {
+    input.fire = down;
+  }
+
+  if (
+    code === 'KeyX' ||
+    code === 'ShiftLeft'
+  ) {
+    input.dash = down;
+  }
+
+  if (
+    code === 'KeyY' &&
+    down
+  ) {
+    cycleWeapon();
+  }
+
+  if (
+    code === 'KeyP' &&
+    down
+  ) {
+    togglePause();
+  }
+
+  if (
+    code === 'KeyR' &&
+    down
+  ) {
+    restart();
+  }
+}
+
+window.addEventListener(
+  'keydown',
+  e => {
+    key(e.code, true);
+
+    if (
+      [
+        'ArrowLeft',
+        'ArrowRight',
+        'ArrowUp',
+        'Space'
+      ].includes(e.code)
+    ) {
+      e.preventDefault();
+    }
+  }
+);
+
+window.addEventListener(
+  'keyup',
+  e => {
+    key(e.code, false);
+  }
+);
+
+
+/* =========================
+   MOBILE CONTROLS
+========================= */
+
+function bindHold(element, action) {
+  if (!element) return;
+
+  const press = e => {
+    e.preventDefault();
+    input[action] = true;
+  };
+
+  const release = e => {
+    e.preventDefault();
+    input[action] = false;
+  };
+
+  element.addEventListener(
+    'pointerdown',
+    press
+  );
+
+  element.addEventListener(
+    'pointerup',
+    release
+  );
+
+  element.addEventListener(
+    'pointercancel',
+    release
+  );
+
+  element.addEventListener(
+    'pointerleave',
+    release
+  );
+}
+
+document
+  .querySelectorAll('[data-key]')
+  .forEach(button => {
+
+    const k =
+      button.dataset.key;
+
+    if (k === 'left') {
+      bindHold(button, 'left');
+    }
+
+    else if (k === 'right') {
+      bindHold(button, 'right');
+    }
+
+    else if (k === 'up') {
+      bindHold(button, 'jump');
+    }
+
+    else if (k === 'down') {
+      bindHold(button, 'down');
+    }
+
+    else if (k === 'a') {
+      bindHold(button, 'jump');
+    }
+
+    else if (k === 'b') {
+      bindHold(button, 'fire');
+    }
+
+    else if (k === 'x') {
+      bindHold(button, 'dash');
+    }
+
+    else if (k === 'y') {
+      button.addEventListener(
+        'pointerdown',
+        e => {
+          e.preventDefault();
+          cycleWeapon();
+        }
+      );
+    }
+  });
+
+
+/* =========================
+   START BUTTON
+========================= */
+
+const startButton =
+  $('startBtn');
+
+if (startButton) {
+
+  startButton.addEventListener(
+    'click',
+    () => {
+
+      /*
+       * FIRST CLICK:
+       * Start the game.
+       */
+      if (
+        !game ||
+        game.state === 'menu' ||
+        game.state === 'win'
+      ) {
+        start(0);
+        return;
+      }
+
+      /*
+       * NEXT LEVEL
+       */
+      if (
+        game.state === 'between'
+      ) {
+        start(game.n + 1);
+        return;
+      }
+
+      /*
+       * PAUSED
+       */
+      if (
+        game.state === 'paused'
+      ) {
+        togglePause();
+        return;
+      }
+
+      /*
+       * LEVEL-UP overlay
+       */
+      if (
+        game.state === 'playing' &&
+        ui.overlay &&
+        !ui.overlay.classList.contains('hidden')
+      ) {
+        hideOverlay();
+        return;
+      }
+
+      start(0);
+    }
+  );
+}
+
+
+/* =========================
+   PAUSE / START BUTTON
+========================= */
+
+const pauseButton =
+  $('pauseBtn');
+
+if (pauseButton) {
+  pauseButton.addEventListener(
+    'click',
+    () => {
+
+      if (!game) {
+        start(0);
+        return;
+      }
+
+      togglePause();
+    }
+  );
+}
+
+
+/* =========================
+   SELECT / QUEST BUTTON
+========================= */
+
+const selectButton =
+  $('selectBtn');
+
+if (selectButton) {
+  selectButton.addEventListener(
+    'click',
+    () => {
+
+      if (!game) return;
+
+      game.quest.reverse();
+
+      updateHUD();
+
+      beep(430, 0.04);
+    }
+  );
+}
+
+const questButton =
+  $('questBtn');
+
+if (questButton) {
+  questButton.addEventListener(
+    'click',
+    () => {
+
+      if (!game) return;
+
+      game.quest.reverse();
+
+      updateHUD();
+
+      beep(430, 0.04);
+    }
+  );
+}
+
+
+/* =========================
+   JOYSTICK
+========================= */
+
+const joystick =
+  $('joystick');
+
+let joystickActive = false;
+
+if (joystick) {
+
+  joystick.addEventListener(
+    'pointerdown',
+    e => {
+
+      e.preventDefault();
+
+      joystickActive = true;
+
+      try {
+        joystick.setPointerCapture(
+          e.pointerId
+        );
+      } catch (err) {}
+    }
+  );
+
+  joystick.addEventListener(
+    'pointermove',
+    e => {
+
+      if (!joystickActive) return;
+
+      const rect =
+        joystick.getBoundingClientRect();
+
+      const centerX =
+        rect.left + rect.width / 2;
+
+      const dx =
+        e.clientX - centerX;
+
+      input.left = dx < -12;
+      input.right = dx > 12;
+    }
+  );
+
+  const releaseJoystick = () => {
+
+    joystickActive = false;
+
+    input.left = false;
+    input.right = false;
+  };
+
+  joystick.addEventListener(
+    'pointerup',
+    releaseJoystick
+  );
+
+  joystick.addEventListener(
+    'pointercancel',
+    releaseJoystick
+  );
+
+  joystick.addEventListener(
+    'pointerleave',
+    releaseJoystick
+  );
+}
+
+
+/* =========================
+   INITIALIZE GAME
+========================= */
+
+game = freshGame(0);
+
+/*
+ * Keep the start screen visible.
+ * The game itself begins only when
+ * START GAME is pressed.
+ */
+game.state = 'menu';
+
+updateHUD();
+draw();
+
+showOverlay(
+  'MUSHROOM MEADOW RUN',
+  'Choose START. Complete quests, defeat enemies, collect gems and level up through 12 stages.',
+  'START GAME'
+);
+
+
+/* =========================
+   GAME LOOP
+========================= */
+
+function loop(time) {
+
+  const dt =
+    Math.min(
+      2,
+      (time - last) / 16.67
+    );
+
+  last = time;
+
+  update(dt);
+  draw();
+
+  raf =
+    requestAnimationFrame(loop);
+}
+
+last = performance.now();
+
+if (!raf) {
+  raf =
+    requestAnimationFrame(loop);
+    }
