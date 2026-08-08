@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#0d1117">
+  <title>Mushroom Meadow Run — Retro Edition</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-icon">🍄</span><div><h1>MUSHROOM MEADOW</h1><p>RETRO ADVENTURE</p></div></div>
+      <div class="top-stats">
+        <div><small>HP</small><div class="meter"><i id="healthFill"></i></div></div>
+        <div><small>LV</small><b id="levelText">1</b></div>
+        <div><small>XP</small><b id="xpText">0/100</b></div>
+        <div><small>COINS</small><b id="coinText">0</b></div>
+        <div><small>GEMS</small><b id="gemText">0</b></div>
+      </div>
+    </header>
+
+    <section class="console">
+      <div class="screen-frame">
+        <div class="screen-head">
+          <span id="levelText2">LEVEL 1</span>
+          <span id="weaponText">BLASTER</span>
+          <span id="livesText">♥♥♥</span>
+        </div>
+        <div class="screen">
+          <canvas id="game" width="960" height="540" aria-label="Mushroom Meadow Run"></canvas>
+          <div id="overlay" class="overlay">
+            <div class="panel">
+              <div class="pixel-logo">🍄</div>
+              <h2 id="overlayTitle">MUSHROOM MEADOW RUN</h2>
+              <p id="overlayText">A retro platform adventure. Complete quests, gain XP, level up, and clear 12 worlds.</p>
+              <button id="startBtn" class="primary">START GAME</button>
+              <p class="hint">A/D or D-pad • W/↑/A jump • J/B fire • X dash • Y weapon • P pause</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="quest-panel">
+        <div class="quest-title">QUEST LOG <button id="questBtn">SELECT</button></div>
+        <div id="questList"></div>
+        <div class="progress-line"><span>XP</span><div><i id="xpFill"></i></div></div>
+        <div class="buffs" id="powerText">NO POWER-UP</div>
+      </aside>
+    </section>
+
+    <section class="controller" aria-label="Game controller">
+      <div class="dpad">
+        <button data-key="up" class="up">▲</button>
+        <button data-key="left" class="left">◀</button>
+        <button data-key="right" class="right">▶</button>
+        <button data-key="down" class="down">▼</button>
+        <div class="dpad-center"></div>
+      </div>
+      <div class="center-controls">
+        <button id="selectBtn" class="small-btn">SELECT</button>
+        <button id="pauseBtn" class="small-btn">START</button>
+        <div class="joystick" id="joystick"><div class="stick"></div></div>
+      </div>
+      <div class="face">
+        <button data-key="y" class="y">Y</button>
+        <button data-key="x" class="x">X</button>
+        <button data-key="b" class="b">B</button>
+        <button data-key="a" class="a">A</button>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>12 LEVELS</span><span>6 ENEMY TYPES</span><span>5 WEAPONS</span><span>LEVEL-UP SYSTEM</span><span>QUESTS</span>
+    </footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
