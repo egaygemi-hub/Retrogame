@@ -38,21 +38,19 @@
   </main>
   <script src="game.js"></script>
   <script>
-    /* Aim joystick: move the stick to choose the shooting direction, then press B. */
+    /* Mobile aim joystick. The game.js fire routine creates the bullet, so
+       this script fixes each newly-created bullet's direction immediately.
+       This avoids trying to replace game.js's local spawnBullet function. */
     (() => {
       const joystick = document.getElementById('joystick');
       const stick = joystick && joystick.querySelector('.stick');
       if (!joystick || !stick) return;
 
       let activePointer = null;
+      let aimX = 1;
+      let aimY = 0;
       const deadZone = 0.18;
       const maxRadius = 38;
-
-      function ensureAim() {
-        if (!game) return;
-        if (!Number.isFinite(game.aimX)) game.aimX = 1;
-        if (!Number.isFinite(game.aimY)) game.aimY = 0;
-      }
 
       function setAim(clientX, clientY) {
         const r = joystick.getBoundingClientRect();
@@ -63,21 +61,23 @@
         const distance = Math.hypot(dx, dy);
         const limit = Math.min(maxRadius, Math.min(r.width, r.height) * 0.38);
 
-        if (distance > limit) {
+        if (distance > limit && distance > 0) {
           dx = dx / distance * limit;
           dy = dy / distance * limit;
         }
 
         stick.style.transform = `translate(${dx}px, ${dy}px)`;
-        ensureAim();
-        if (!game) return;
 
-        if (Math.hypot(dx, dy) >= limit * deadZone) {
-          const length = Math.hypot(dx, dy) || 1;
-          game.aimX = dx / length;
-          game.aimY = dy / length;
-          game.player.facingX = game.aimX;
-          game.player.facingY = game.aimY;
+        if (distance >= limit * deadZone && distance > 0) {
+          const length = Math.hypot(dx, dy);
+          aimX = dx / length;
+          aimY = dy / length;
+          if (game && game.player) {
+            game.aimX = aimX;
+            game.aimY = aimY;
+            game.player.facingX = aimX;
+            game.player.facingY = aimY;
+          }
         }
       }
 
@@ -102,43 +102,48 @@
       });
       joystick.addEventListener('pointercancel', resetAim);
 
-      const originalSpawnBullet = window.spawnBullet;
-      if (typeof originalSpawnBullet === 'function') {
-        window.spawnBullet = function() {
-          if (!game) return;
-          ensureAim();
+      // game.js creates bullets with horizontal velocity. Catch each new
+      // bullet and rotate its velocity to the direction selected by the
+      // joystick. The _aimApplied flag prevents the direction changing after
+      // the projectile has been fired.
+      let trackedGame = null;
+      let trackedBullets = null;
+      function applyAimToNewBullets() {
+        if (!game || !game.bullets) return;
 
-          const w = game.profile.weapon;
-          const p = game.player;
-          const baseX = p.x + p.w / 2;
-          const baseY = p.y + p.h / 2;
-          const ax = game.aimX || 1;
-          const ay = game.aimY || 0;
-          const angle = Math.atan2(ay, ax);
-          const speed = w === 'laser' ? 16 : w === 'bomb' ? 7 : 10;
-          const damage = w === 'laser' ? 3 : game.profile.damage;
-          const bulletW = w === 'laser' ? 34 : 12;
+        if (game !== trackedGame) {
+          trackedGame = game;
+          trackedBullets = new WeakSet();
+          game.aimX = aimX;
+          game.aimY = aimY;
+        }
 
-          let angles = [angle];
-          if (w === 'spread') angles = [angle - 0.22, angle, angle + 0.22];
+        for (const b of game.bullets) {
+          if (trackedBullets.has(b)) continue;
+          trackedBullets.add(b);
 
-          for (const a of angles) {
-            game.bullets.push({
-              x: baseX + Math.cos(a) * 20,
-              y: baseY + Math.sin(a) * 20,
-              vx: Math.cos(a) * speed,
-              vy: Math.sin(a) * speed,
-              w: bulletW,
-              h: 6,
-              damage,
-              bomb: w === 'bomb',
-              life: 80,
-              angle: a
-            });
+          const ax = Number.isFinite(game.aimX) ? game.aimX : aimX;
+          const ay = Number.isFinite(game.aimY) ? game.aimY : aimY;
+          const length = Math.hypot(ax, ay) || 1;
+          const dx = ax / length;
+          const dy = ay / length;
+          const speed = game.profile.weapon === 'laser' ? 16 : game.profile.weapon === 'bomb' ? 7 : 10;
+
+          b.vx = dx * speed;
+          b.vy = dy * speed;
+          b.angle = Math.atan2(dy, dx);
+
+          // Center the projectile on the player's current aim direction.
+          if (game.player) {
+            const px = game.player.x + game.player.w / 2;
+            const py = game.player.y + game.player.h / 2;
+            b.x = px + dx * 20;
+            b.y = py + dy * 20;
           }
-          if (typeof beep === 'function') beep(w === 'laser' ? 880 : 520, 0.035);
-        };
+        }
       }
+
+      setInterval(applyAimToNewBullets, 8);
     })();
   </script>
 </body>
