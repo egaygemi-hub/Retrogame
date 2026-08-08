@@ -1,1224 +1,258 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 :root {
-  --bg: #0a0d12;
-  --shell: #1a2029;
-  --panel: #111722;
-  --accent: #e9c44a;
-  --red: #d95858;
-  --blue: #4d86c7;
+  --bg: #080b10;
+  --surface: #121821;
+  --surface-2: #1a222d;
+  --surface-3: #222d39;
+  --border: #354352;
+  --border-light: #4b5a69;
+  --text: #f3f6f8;
+  --muted: #8c9aaa;
+  --gold: #e8c451;
+  --green: #55c96b;
+  --red: #d95861;
+  --blue: #58a4dc;
+  --shadow: rgba(0,0,0,.45);
 }
 
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-
-html,
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { min-height: 100%; background: var(--bg); }
 body {
   margin: 0;
-  min-height: 100%;
+  min-height: 100vh;
+  padding: 12px;
+  color: var(--text);
   background:
-    radial-gradient(
-      circle at 50% 0,
-      #263140 0,
-      #0a0d12 55%
-    );
-  color: #f3f5f7;
+    radial-gradient(circle at 50% -10%, #263241 0, #10161e 38%, var(--bg) 72%);
   font-family: system-ui, sans-serif;
-}
-
-body {
-  padding: 10px;
-  padding-bottom: 24px;
   overflow-x: hidden;
 }
+button { font: inherit; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.shell { width: min(1120px, 100%); margin: 0 auto; }
 
-button {
-  font: inherit;
-  touch-action: none;
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.shell {
-  width: 100%;
-  max-width: 1120px;
-  margin: auto;
-}
-
-
-/* =========================
-   TOP BAR
-========================= */
-
+/* HEADER */
 .topbar {
-  background:
-    linear-gradient(
-      145deg,
-      #262e38,
-      #141a22
-    );
-
-  border: 3px solid #394553;
-  border-radius: 18px;
-
-  padding: 12px;
-
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-
-  gap: 12px;
-
-  box-shadow:
-    0 12px 30px #0008;
+  gap: 18px;
+  padding: 12px 14px;
+  background: linear-gradient(145deg, #202a35, #141a22);
+  border: 2px solid var(--border-light);
+  border-radius: 16px;
+  box-shadow: 0 12px 28px var(--shadow);
 }
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.brand-icon {
-  font-size: 40px;
-  flex-shrink: 0;
-}
-
+.brand { display:flex; align-items:center; gap:10px; min-width:0; }
+.brand-icon { font-size: 36px; line-height:1; }
 .brand h1 {
-  font:
-    16px
-    'Press Start 2P',
-    monospace;
-
-  margin: 0 0 7px;
+  margin: 0 0 6px;
+  font: 14px/1.45 'Press Start 2P', monospace;
+  letter-spacing: .2px;
 }
-
-.brand p {
-  margin: 0;
-  color: #9ca9b8;
-  font-size: 11px;
-}
-
-.top-stats {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
+.brand p { margin:0; color:var(--muted); font-size:10px; letter-spacing:1.5px; }
+.top-stats { display:grid; grid-template-columns:repeat(5,minmax(62px,1fr)); gap:6px; flex:0 0 auto; }
 .top-stats > div {
-  background: #0e141c;
-  border: 2px solid #2c3948;
-  border-radius: 10px;
-  padding: 7px 8px;
-  min-width: 55px;
+  min-width:62px;
+  padding:7px 8px;
+  text-align:center;
+  background:#0d131a;
+  border:1px solid #2d3946;
+  border-radius:9px;
 }
+.top-stats small { display:block; margin-bottom:5px; color:#778696; font-size:7px; letter-spacing:1px; }
+.top-stats b { font:9px 'Press Start 2P',monospace; white-space:nowrap; }
+.meter { width:58px; height:7px; margin:auto; overflow:hidden; background:#29333e; border-radius:10px; }
+.meter i { display:block; width:100%; height:100%; background:linear-gradient(90deg,#55c96b,#e7c54f,#d95861); }
 
-.top-stats small {
-  display: block;
-  color: #8290a0;
-  font-size: 8px;
-  margin-bottom: 4px;
-}
-
-.top-stats b {
-  font:
-    11px
-    'Press Start 2P',
-    monospace;
-}
-
-.meter {
-  width: 70px;
-  height: 8px;
-  background: #303845;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.meter i {
-  display: block;
-  height: 100%;
-  width: 100%;
-  background:
-    linear-gradient(
-      90deg,
-      #5bd66f,
-      #e8c64b,
-      #d95858
-    );
-}
-
-
-/* =========================
-   GAME CONSOLE
-========================= */
-
+/* CONSOLE */
 .console {
-  margin-top: 12px;
-
-  background: #1a2029;
-
-  border: 4px solid #394553;
-  border-radius: 26px;
-
-  padding: 12px;
-
-  box-shadow:
-    inset 0 2px #ffffff12,
-    0 20px 45px #0009;
+  margin-top:12px;
+  padding:10px;
+  background:linear-gradient(145deg,#202a35,#131920);
+  border:3px solid var(--border);
+  border-radius:22px 22px 12px 12px;
+  box-shadow:0 18px 38px var(--shadow), inset 0 1px rgba(255,255,255,.04);
 }
-
-.screen-frame {
-  background: #0b0f14;
-
-  border: 7px solid #303944;
-  border-radius: 20px;
-
-  padding: 8px;
-
-  box-shadow:
-    inset 0 0 0 3px #090c10;
-}
-
+.screen-frame { padding:7px; background:#080c11; border:5px solid #2f3944; border-radius:15px; box-shadow:inset 0 0 0 2px #05070a; }
 .screen-head {
-  display: flex;
-  justify-content: space-between;
-
-  background: #101720;
-  color: #aab5c2;
-
-  padding: 8px 10px;
-
-  font:
-    9px
-    'Press Start 2P',
-    monospace;
-
-  border-radius: 8px 8px 0 0;
-
-  gap: 5px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  color:#aeb9c5;
+  background:#0e151d;
+  border-radius:7px 7px 0 0;
+  font:8px 'Press Start 2P',monospace;
 }
-
+.screen-head span:nth-child(2) { text-align:center; color:var(--gold); }
+.screen-head span:last-child { text-align:right; }
 .screen {
-  position: relative;
-
-  width: 100%;
-
-  aspect-ratio: 16 / 9;
-
-  border: 4px solid #222c36;
-
-  background: #10151a;
-
-  overflow: hidden;
-
-  border-radius: 0 0 5px 5px;
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  overflow:hidden;
+  background:#0b1015;
+  border:3px solid #202a34;
+  border-radius:0 0 5px 5px;
 }
+canvas { display:block; width:100%; height:100%; image-rendering:pixelated; image-rendering:crisp-edges; touch-action:none; }
 
-canvas {
-  display: block;
-
-  width: 100%;
-  height: 100%;
-
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-
-  touch-action: none;
-}
-
-
-/* =========================
-   START / PAUSE OVERLAY
-========================= */
-
-.overlay {
-  position: absolute;
-  inset: 0;
-
-  display: grid;
-  place-items: center;
-
-  background: #08101acc;
-
-  z-index: 4;
-
-  padding: 15px;
-}
-
-.overlay.hidden {
-  display: none;
-}
-
+/* OVERLAY */
+.overlay { position:absolute; inset:0; z-index:4; display:grid; place-items:center; padding:18px; background:rgba(5,9,13,.72); backdrop-filter:blur(2px); }
+.overlay.hidden { display:none; }
 .panel {
-  width: min(90%, 600px);
-
-  background: #101823;
-
-  border: 3px solid #4a5969;
-  border-radius: 14px;
-
-  padding: 24px;
-
-  text-align: center;
-
-  box-shadow:
-    0 18px 50px #000b;
+  width:min(560px,94%);
+  padding:24px;
+  text-align:center;
+  background:linear-gradient(160deg,#151e28,#0e141b);
+  border:2px solid #536170;
+  border-radius:14px;
+  box-shadow:0 20px 50px rgba(0,0,0,.65);
 }
-
-.panel h2 {
-  font:
-    20px
-    'Press Start 2P',
-    monospace;
-
-  line-height: 1.6;
-
-  margin: 8px 0 16px;
-
-  color: #f0cf57;
-}
-
-.panel p {
-  color: #b8c2cc;
-  line-height: 1.5;
-}
-
-.pixel-logo {
-  font-size: 58px;
-}
-
-.primary,
-.small-btn {
-  border: 0;
-
-  border-bottom: 5px solid #9c7b1e;
-
-  background:
-    linear-gradient(
-      #f4d66a,
-      #d5ad36
-    );
-
-  color: #17130a;
-
-  border-radius: 10px;
-
-  padding: 12px 18px;
-
-  font-weight: 900;
-}
-
+.pixel-logo { font-size:52px; line-height:1; }
+.panel h2 { margin:12px 0 14px; color:var(--gold); font:18px/1.55 'Press Start 2P',monospace; }
+.panel p { margin:10px 0; color:#b6c1cc; font-size:13px; line-height:1.55; }
 .primary {
-  font:
-    11px
-    'Press Start 2P',
-    monospace;
+  width:min(300px,100%);
+  margin:8px auto;
+  padding:13px 18px;
+  border:0;
+  border-bottom:4px solid #9a791c;
+  border-radius:9px;
+  color:#17130a;
+  background:linear-gradient(#f5d86c,#d3aa32);
+  font:10px 'Press Start 2P',monospace;
+  box-shadow:0 5px 15px rgba(0,0,0,.25);
 }
+.primary:active { transform:translateY(3px); border-bottom-width:1px; }
+.hint { font-size:9px !important; color:#7e8b99 !important; }
 
-.primary:active,
-.small-btn:active {
-  transform: translateY(3px);
-  border-bottom-width: 2px;
-}
+/* QUESTS */
+.quest-panel { margin-top:9px; padding:10px; background:#0d131a; border:2px solid #2e3b48; border-radius:11px; }
+.quest-title { display:flex; align-items:center; justify-content:space-between; gap:10px; color:var(--gold); font:10px 'Press Start 2P',monospace; }
+.quest-title button { padding:6px 9px; color:#fff; background:#263442; border:1px solid #4d5e70; border-radius:6px; font-size:8px; }
+#questList { display:grid; grid-template-columns:repeat(5,1fr); gap:7px; margin-top:9px; }
+.quest { min-width:0; padding:8px; background:#131b24; border:1px solid #263441; border-radius:7px; font-size:10px; line-height:1.35; }
+.quest span { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.quest small { color:#81909f; font-size:8px; }
+.quest b { display:block; margin-top:5px; color:#8f9dab; font-size:8px; }
+.quest.done { color:#68dc7d; border-color:#31583b; background:#122019; }
+.progress-line { display:flex; align-items:center; gap:8px; margin-top:9px; font:8px 'Press Start 2P',monospace; }
+.progress-line > div { flex:1; height:8px; overflow:hidden; background:#28323d; border-radius:8px; }
+.progress-line i { display:block; width:0; height:100%; background:var(--gold); }
+.buffs { margin-top:8px; color:#73c9ee; font-size:10px; }
 
-.hint {
-  font-size: 10px !important;
-}
-
-
-/* =========================
-   QUEST PANEL
-========================= */
-
-.quest-panel {
-  margin-top: 10px;
-
-  background: #0f151d;
-
-  border: 3px solid #303c49;
-
-  border-radius: 14px;
-
-  padding: 10px;
-}
-
-.quest-title {
-  font:
-    11px
-    'Press Start 2P',
-    monospace;
-
-  color: #e4c455;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.quest-title button {
-  font-size: 9px;
-
-  padding: 6px;
-
-  border-radius: 6px;
-
-  background: #283646;
-  color: #fff;
-
-  border: 1px solid #506074;
-}
-
-.quest {
-  display: grid;
-
-  grid-template-columns: 1fr auto;
-
-  gap: 4px;
-
-  padding: 8px 4px;
-
-  border-bottom: 1px solid #27313c;
-
-  font-size: 12px;
-}
-
-.quest small {
-  color: #8795a4;
-}
-
-.quest.done {
-  color: #66dd83;
-}
-
-.progress-line {
-  display: flex;
-
-  gap: 8px;
-
-  align-items: center;
-
-  margin-top: 9px;
-
-  font:
-    9px
-    'Press Start 2P',
-    monospace;
-}
-
-.progress-line > div {
-  height: 9px;
-
-  flex: 1;
-
-  background: #29323d;
-
-  border-radius: 8px;
-
-  overflow: hidden;
-}
-
-.progress-line i {
-  display: block;
-
-  height: 100%;
-
-  width: 0;
-
-  background: #e9c44a;
-}
-
-.buffs {
-  margin-top: 8px;
-
-  font-size: 11px;
-
-  color: #78d7ff;
-}
-
-
-/* =========================
-   CONTROLLER
-========================= */
-
+/* CONTROLLER */
 .controller {
-  display: grid;
+  display:grid;
+  grid-template-columns:1fr 150px 1fr;
+  align-items:center;
+  gap:20px;
+  padding:16px 22px 20px;
+  background:linear-gradient(145deg,#202a34,#11171e);
+  border:3px solid var(--border);
+  border-top:0;
+  border-radius:0 0 25px 25px;
+  box-shadow:0 18px 35px var(--shadow);
+}
+.dpad { position:relative; width:138px; height:138px; justify-self:center; }
+.dpad button { position:absolute; width:44px; height:44px; padding:0; border:0; border-radius:7px; color:#b8c2cc; background:#151c24; box-shadow:inset 0 0 0 2px #3b4855,0 4px #080b0f; font-size:19px; }
+.dpad button:active { transform:translateY(3px); box-shadow:inset 0 0 0 2px #3b4855; }
+.dpad .up { left:47px; top:0; } .dpad .left { left:0; top:47px; } .dpad .right { right:0; top:47px; } .dpad .down { left:47px; bottom:0; }
+.dpad-center { position:absolute; left:47px; top:47px; width:44px; height:44px; background:#151c24; box-shadow:inset 0 0 0 2px #3b4855; }
+.center-controls { display:flex; align-items:center; flex-direction:column; gap:9px; }
+.small-btn { min-width:68px; padding:7px 9px; border:1px solid #667687; border-bottom-width:3px; border-radius:7px; color:#fff; background:#424e5b; font:8px 'Press Start 2P',monospace; }
+.small-btn:active { transform:translateY(2px); border-bottom-width:1px; }
+.joystick { width:72px; height:72px; display:grid; place-items:center; border-radius:50%; background:#0c1117; box-shadow:inset 0 0 0 7px #252f39,0 5px #080a0d; touch-action:none; }
+.stick { width:38px; height:38px; border-radius:50%; background:radial-gradient(circle at 35% 28%,#6b7783,#252e37 68%); box-shadow:0 4px 5px #000; }
+.face { position:relative; width:150px; height:138px; justify-self:center; }
+.face button { position:absolute; width:52px; height:52px; padding:0; border:0; border-radius:50%; color:#fff; font:bold 17px system-ui; box-shadow:inset 0 0 0 3px rgba(255,255,255,.14),0 5px #080a0d; }
+.face button:active { transform:translateY(4px); box-shadow:inset 0 0 0 3px rgba(255,255,255,.14); }
+.face .y { left:49px; top:0; background:#cda42f; } .face .x { left:0; top:43px; background:#4e79aa; } .face .b { right:0; top:43px; background:#c34c56; } .face .a { left:49px; bottom:0; background:#469e63; }
+.footer { display:flex; justify-content:center; flex-wrap:wrap; gap:12px 18px; padding:12px 6px; color:#687786; font:7px 'Press Start 2P',monospace; }
 
-  grid-template-columns:
-    minmax(110px, 1fr)
-    auto
-    minmax(110px, 1fr);
-
-  align-items: center;
-
-  gap: 20px;
-
-  padding: 18px 25px;
-
-  background:
-    linear-gradient(
-      145deg,
-      #222a34,
-      #11171e
-    );
-
-  border: 4px solid #394553;
-
-  border-radius: 0 0 30px 30px;
-
-  box-shadow:
-    inset 0 4px #ffffff0a,
-    0 18px 35px #0009;
+/* TABLET */
+@media (max-width:850px) {
+  body { padding:7px; }
+  .topbar { flex-direction:column; gap:9px; }
+  .brand { justify-content:center; }
+  .top-stats { width:100%; }
+  #questList { grid-template-columns:repeat(2,1fr); }
+  .controller { grid-template-columns:1fr 110px 1fr; gap:5px; padding-left:8px; padding-right:8px; }
 }
 
-
-/* =========================
-   D-PAD
-========================= */
-
-.dpad {
-  position: relative;
-
-  width: 150px;
-  height: 150px;
-
-  justify-self: center;
+/* PHONE */
+@media (max-width:600px) {
+  body { padding:4px; }
+  .topbar { padding:8px; border-radius:11px; }
+  .brand-icon { font-size:28px; }
+  .brand h1 { font-size:9px; line-height:1.45; }
+  .brand p { font-size:7px; }
+  .top-stats { grid-template-columns:repeat(5,1fr); gap:3px; }
+  .top-stats > div { min-width:0; padding:5px 2px; border-radius:6px; }
+  .top-stats small { font-size:5px; margin-bottom:3px; }
+  .top-stats b { font-size:6px; }
+  .meter { width:100%; height:5px; }
+  .console { margin-top:6px; padding:4px; border-width:2px; border-radius:12px 12px 7px 7px; }
+  .screen-frame { padding:3px; border-width:3px; border-radius:9px; }
+  .screen-head { padding:6px 5px; font-size:5px; gap:3px; }
+  .screen { border-width:2px; }
+  .overlay { padding:7px; }
+  .panel { padding:13px 10px; border-radius:9px; }
+  .pixel-logo { font-size:34px; }
+  .panel h2 { font-size:10px; margin:7px 0 9px; }
+  .panel p { font-size:9px; line-height:1.4; }
+  .primary { padding:11px 7px; font-size:7px; }
+  .hint { font-size:6px !important; }
+  .quest-panel { padding:7px; margin-top:5px; }
+  .quest-title { font-size:7px; }
+  .quest-title button { font-size:6px; padding:5px 6px; }
+  #questList { grid-template-columns:repeat(2,1fr); gap:4px; }
+  .quest { padding:6px; font-size:8px; }
+  .quest small,.quest b { font-size:6px; }
+  .progress-line { font-size:6px; }
+  .buffs { font-size:7px; }
+  .controller { grid-template-columns:1fr 62px 1fr; gap:0; padding:8px 2px 10px; border-width:2px; border-radius:0 0 14px 14px; }
+  .dpad { width:110px; height:110px; transform:scale(.76); margin:-12px auto; }
+  .dpad button { width:43px; height:43px; font-size:17px; }
+  .dpad .up { left:33.5px; } .dpad .left { top:33.5px; } .dpad .right { top:33.5px; } .dpad .down { left:33.5px; }
+  .dpad-center { left:33.5px; top:33.5px; width:43px; height:43px; }
+  .center-controls { gap:5px; }
+  .small-btn { min-width:54px; padding:6px 2px; font-size:5px; }
+  .joystick { width:54px; height:54px; box-shadow:inset 0 0 0 5px #252f39,0 4px #080a0d; }
+  .stick { width:28px; height:28px; }
+  .face { width:110px; height:110px; transform:scale(.76); margin:-12px auto; }
+  .face button { width:43px; height:43px; font-size:14px; }
+  .face .y { left:33.5px; } .face .x { top:33.5px; } .face .b { top:33.5px; } .face .a { left:33.5px; }
+  .footer { gap:6px 10px; padding:7px 2px; font-size:5px; }
 }
 
-.dpad button {
-  position: absolute;
-
-  border: 0;
-
-  background: #151b22;
-
-  color: #aeb8c2;
-
-  width: 48px;
-  height: 48px;
-
-  border-radius: 8px;
-
-  box-shadow:
-    inset 0 0 0 2px #3a4653,
-    0 4px #090c10;
-
-  font-size: 22px;
+/* SMALL PHONE */
+@media (max-width:380px) {
+  .brand h1 { font-size:8px; }
+  .brand-icon { font-size:24px; }
+  .top-stats b { font-size:5px; }
+  .screen-head { font-size:4px; }
+  .controller { grid-template-columns:1fr 56px 1fr; }
+  .dpad,.face { transform:scale(.68); }
+  .small-btn { min-width:49px; font-size:4.5px; }
+  .joystick { width:49px; height:49px; }
+  .stick { width:25px; height:25px; }
 }
 
-.dpad button:active {
-  transform: translateY(3px);
-  box-shadow:
-    inset 0 0 0 2px #3a4653;
+/* LANDSCAPE PHONE */
+@media (max-height:520px) and (orientation:landscape) {
+  body { padding:3px; }
+  .topbar { flex-direction:row; padding:5px 7px; }
+  .brand-icon { font-size:22px; }
+  .brand h1 { font-size:7px; }
+  .brand p { font-size:5px; }
+  .top-stats > div { padding:3px; }
+  .console { margin-top:3px; }
+  .quest-panel { display:none; }
+  .controller { padding-top:6px; padding-bottom:6px; }
+  .footer { display:none; }
 }
-
-.dpad .up {
-  left: 51px;
-  top: 0;
-}
-
-.dpad .left {
-  left: 0;
-  top: 51px;
-}
-
-.dpad .right {
-  right: 0;
-  top: 51px;
-}
-
-.dpad .down {
-  left: 51px;
-  bottom: 0;
-}
-
-.dpad-center {
-  position: absolute;
-
-  left: 51px;
-  top: 51px;
-
-  width: 48px;
-  height: 48px;
-
-  background: #151b22;
-
-  box-shadow:
-    inset 0 0 0 2px #3a4653;
-}
-
-
-/* =========================
-   CENTER CONTROLS
-========================= */
-
-.center-controls {
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-
-  flex-direction: column;
-}
-
-.small-btn {
-  font-size: 9px;
-
-  padding: 8px 12px;
-
-  background: #444f5d;
-
-  color: #fff;
-
-  border: 1px solid #697686;
-
-  border-bottom-width: 4px;
-}
-
-.joystick {
-  width: 78px;
-  height: 78px;
-
-  border-radius: 50%;
-
-  background: #0d1218;
-
-  box-shadow:
-    inset 0 0 0 8px #252e38,
-    0 5px #080a0d;
-
-  display: grid;
-
-  place-items: center;
-
-  touch-action: none;
-}
-
-.stick {
-  width: 42px;
-  height: 42px;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle at 35% 30%,
-      #66717d,
-      #252d35 65%
-    );
-
-  box-shadow:
-    0 4px 5px #000;
-}
-
-
-/* =========================
-   FACE BUTTONS
-========================= */
-
-.face {
-  position: relative;
-
-  width: 170px;
-  height: 150px;
-
-  justify-self: center;
-}
-
-.face button {
-  position: absolute;
-
-  width: 56px;
-  height: 56px;
-
-  border: 0;
-
-  border-radius: 50%;
-
-  font:
-    bold 18px
-    system-ui;
-
-  color: #fff;
-
-  box-shadow:
-    inset 0 0 0 3px #ffffff28,
-    0 5px #080a0d;
-}
-
-.face button:active {
-  transform: translateY(4px);
-
-  box-shadow:
-    inset 0 0 0 3px #ffffff28;
-}
-
-.face .y {
-  left: 57px;
-  top: 0;
-
-  background: #d0a833;
-}
-
-.face .x {
-  left: 0;
-  top: 47px;
-
-  background: #527eb2;
-}
-
-.face .b {
-  right: 0;
-  top: 47px;
-
-  background: #c64e56;
-}
-
-.face .a {
-  left: 57px;
-  bottom: 0;
-
-  background: #46a467;
-}
-
-
-/* =========================
-   FOOTER
-========================= */
-
-.footer {
-  display: flex;
-
-  justify-content: center;
-
-  flex-wrap: wrap;
-
-  gap: 16px;
-
-  color: #778494;
-
-  font:
-    8px
-    'Press Start 2P',
-    monospace;
-
-  padding: 14px;
-}
-
-
-/* =====================================================
-   TABLET
-===================================================== */
-
-@media (max-width: 850px) {
-
-  body {
-    padding: 6px;
-  }
-
-  .topbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .brand {
-    justify-content: center;
-  }
-
-  .top-stats {
-    width: 100%;
-
-    display: grid;
-
-    grid-template-columns:
-      repeat(5, 1fr);
-  }
-
-  .top-stats > div {
-    min-width: 0;
-    text-align: center;
-  }
-
-  .meter {
-    width: 100%;
-  }
-
-  .controller {
-    grid-template-columns:
-      1fr 90px 1fr;
-
-    gap: 5px;
-
-    padding: 15px 8px;
-  }
-}
-
-
-/* =====================================================
-   MOBILE
-===================================================== */
-
-@media (max-width: 600px) {
-
-  body {
-    padding: 4px;
-    padding-bottom: 12px;
-  }
-
-  .shell {
-    width: 100%;
-  }
-
-  /* Header */
-
-  .topbar {
-    border-width: 2px;
-
-    border-radius: 12px;
-
-    padding: 8px;
-
-    gap: 8px;
-  }
-
-  .brand {
-    justify-content: center;
-
-    text-align: center;
-  }
-
-  .brand-icon {
-    font-size: 30px;
-  }
-
-  .brand h1 {
-    font-size: 10px;
-
-    line-height: 1.5;
-
-    margin-bottom: 3px;
-  }
-
-  .brand p {
-    font-size: 7px;
-  }
-
-  .top-stats {
-    gap: 3px;
-  }
-
-  .top-stats > div {
-    padding: 5px 2px;
-
-    border-width: 1px;
-
-    border-radius: 7px;
-  }
-
-  .top-stats small {
-    font-size: 6px;
-  }
-
-  .top-stats b {
-    font-size: 7px;
-  }
-
-  .meter {
-    height: 6px;
-    margin-top: 3px;
-  }
-
-
-  /* Game */
-
-  .console {
-    margin-top: 6px;
-
-    padding: 4px;
-
-    border-width: 2px;
-
-    border-radius: 13px;
-  }
-
-  .screen-frame {
-    padding: 3px;
-
-    border-width: 3px;
-
-    border-radius: 10px;
-  }
-
-  .screen-head {
-    padding: 6px;
-
-    font-size: 6px;
-
-    border-radius: 5px 5px 0 0;
-  }
-
-  .screen {
-    border-width: 2px;
-  }
-
-
-  /* Overlay */
-
-  .overlay {
-    padding: 8px;
-  }
-
-  .panel {
-    width: 94%;
-
-    padding: 12px;
-
-    border-width: 2px;
-
-    border-radius: 9px;
-  }
-
-  .pixel-logo {
-    font-size: 35px;
-  }
-
-  .panel h2 {
-    font-size: 11px;
-
-    line-height: 1.5;
-
-    margin: 5px 0 10px;
-  }
-
-  .panel p {
-    font-size: 10px;
-
-    line-height: 1.4;
-  }
-
-  .primary {
-    width: 100%;
-
-    padding: 11px 8px;
-
-    font-size: 8px;
-  }
-
-  .hint {
-    font-size: 7px !important;
-  }
-
-
-  /* Quest */
-
-  .quest-panel {
-    margin-top: 6px;
-
-    padding: 7px;
-
-    border-width: 2px;
-
-    border-radius: 9px;
-  }
-
-  .quest-title {
-    font-size: 8px;
-  }
-
-  .quest-title button {
-    font-size: 7px;
-
-    padding: 5px;
-  }
-
-  .quest {
-    font-size: 9px;
-
-    padding: 6px 2px;
-  }
-
-  .quest small {
-    font-size: 8px;
-  }
-
-  .progress-line {
-    font-size: 7px;
-  }
-
-  .buffs {
-    font-size: 8px;
-  }
-
-
-  /* Controller */
-
-  .controller {
-    display: grid;
-
-    grid-template-columns:
-      1fr 65px 1fr;
-
-    gap: 0;
-
-    padding: 8px 3px;
-
-    border-width: 2px;
-
-    border-radius: 0 0 15px 15px;
-  }
-
-  /* D-pad */
-
-  .dpad {
-    width: 112px;
-    height: 112px;
-
-    transform: scale(.78);
-
-    transform-origin: center;
-
-    margin: -12px auto;
-  }
-
-  .dpad button {
-    width: 43px;
-    height: 43px;
-
-    font-size: 18px;
-  }
-
-  .dpad .up {
-    left: 35px;
-  }
-
-  .dpad .left {
-    left: 0;
-    top: 35px;
-  }
-
-  .dpad .right {
-    right: 0;
-    top: 35px;
-  }
-
-  .dpad .down {
-    left: 35px;
-  }
-
-  .dpad-center {
-    left: 35px;
-    top: 35px;
-
-    width: 43px;
-    height: 43px;
-  }
-
-
-  /* Center */
-
-  .center-controls {
-    gap: 6px;
-  }
-
-  .small-btn {
-    width: 58px;
-
-    padding: 6px 3px;
-
-    font-size: 6px;
-
-    border-bottom-width: 3px;
-  }
-
-  .joystick {
-    width: 58px;
-    height: 58px;
-
-    box-shadow:
-      inset 0 0 0 6px #252e38,
-      0 4px #080a0d;
-  }
-
-  .stick {
-    width: 30px;
-    height: 30px;
-  }
-
-
-  /* Face buttons */
-
-  .face {
-    width: 112px;
-    height: 112px;
-
-    transform: scale(.78);
-
-    transform-origin: center;
-
-    margin: -12px auto;
-  }
-
-  .face button {
-    width: 43px;
-    height: 43px;
-
-    font-size: 14px;
-  }
-
-  .face .y {
-    left: 34px;
-  }
-
-  .face .x {
-    left: 0;
-    top: 34px;
-  }
-
-  .face .b {
-    right: 0;
-    top: 34px;
-  }
-
-  .face .a {
-    left: 34px;
-  }
-
-
-  /* Footer */
-
-  .footer {
-    gap: 7px;
-
-    padding: 8px 3px;
-
-    font-size: 6px;
-  }
-}
-
-
-/* =====================================================
-   VERY SMALL PHONES
-===================================================== */
-
-@media (max-width: 380px) {
-
-  .brand h1 {
-    font-size: 8px;
-  }
-
-  .brand-icon {
-    font-size: 25px;
-  }
-
-  .top-stats b {
-    font-size: 6px;
-  }
-
-  .top-stats small {
-    font-size: 5px;
-  }
-
-  .screen-head {
-    font-size: 5px;
-  }
-
-  .controller {
-    grid-template-columns:
-      1fr 58px 1fr;
-  }
-
-  .dpad,
-  .face {
-    transform: scale(.68);
-  }
-
-  .small-btn {
-    width: 52px;
-    font-size: 5px;
-  }
-
-  .joystick {
-    width: 52px;
-    height: 52px;
-  }
-
-  .stick {
-    width: 27px;
-    height: 27px;
-  }
-
-  .footer {
-    font-size: 5px;
-  }
-}
-
-
-/* =====================================================
-   LANDSCAPE PHONE
-===================================================== */
-
-@media (max-height: 520px) and (orientation: landscape) {
-
-  body {
-    padding: 3px;
-  }
-
-  .topbar {
-    flex-direction: row;
-
-    padding: 5px;
-  }
-
-  .brand-icon {
-    font-size: 24px;
-  }
-
-  .brand h1 {
-    font-size: 8px;
-  }
-
-  .brand p {
-    font-size: 6px;
-  }
-
-  .top-stats > div {
-    padding: 3px;
-  }
-
-  .console {
-    margin-top: 4px;
-  }
-
-  .quest-panel {
-    display: none;
-  }
-
-  .controller {
-    padding: 5px;
-  }
-
-  .dpad,
-  .face {
-    transform: scale(.6);
-    margin: -20px;
-  }
-
-  .joystick {
-    width: 50px;
-    height: 50px;
-  }
-
-  .stick {
-    width: 26px;
-    height: 26px;
-  }
-
-  .footer {
-    display: none;
-  }
-  }
